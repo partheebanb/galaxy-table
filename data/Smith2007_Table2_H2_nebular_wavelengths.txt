@@ -1,0 +1,22 @@
+# https://iopscience.iop.org/article/10.1086/510549/fulltext/65289.tables.html
+# Smith et al. 2007 - The mid-infrared spectrum of star-forming galaxies- Global properties of polycyclic aromatic hydrocarbon emission
+# lambda and FWHM in microns
+line	lambda	FWHM
+H_{2} S(7)	5.511	0.053
+H_{2} S(6)	6.109	0.053
+H_{2} S(5)	6.909	0.053
+[Ar II]	6.985	0.053
+H_{2} S(4)	8.026	0.100
+[Ar III]	8.991	0.100
+H_{2} S(3)	9.665	0.100
+[S IV]	10.511	0.100
+H_{2} S(2)	12.278	0.100
+[Ne II]	12.813	0.100
+[Ne III]	15.555	0.140
+H_{2} S(1)	17.035	0.140
+[S III]	18.713	0.140
+[O IV]	25.910	0.340
+[Fe II]	25.989	0.340
+H_{2} S(0)	28.221	0.340
+[S III]	33.480	0.340
+[Si II]	34.815	0.340

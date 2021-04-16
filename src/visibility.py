@@ -464,23 +464,6 @@ def VisibilityPlot(date=None, targets=None, observatory=None, plotLegend=True,
   else:
     obs = pyasl.observatory(observatory)
 
-  # observer = ephem.Observer()
-  # observer.pressure = 0
-  # observer.horizon = '-0:34'
-  # observer.lat, observer.lon = obs['latitude'], obs['longitude']
-  # observer.date = date
-  # print(observer.date)
-  # print(observer.previous_rising(ephem.Sun()))
-  # print(observer.next_setting(ephem.Sun()))
-  # print(observer.previous_rising(ephem.Moon()))
-  # print(observer.next_setting(ephem.Moon()))
-  # observer.horizon = '-6'
-  # noon = observer.next_transit(ephem.Sun())
-  # print(noon)
-  # print(observer.previous_rising(ephem.Sun(), start=noon, use_center=True))
-  # print()
-
-
   fig = plt.figure(figsize=(15,10))
   fig.subplots_adjust(left=0.07, right=0.8, bottom=0.15, top=0.88)
 
@@ -706,10 +689,10 @@ def list_obs():
 
 @app.command()
 def vis_year(
-    input_file:str = typer.Argument('input.csv', help='csv/txt file containing names and coordinates of targets (in degrees)'),
+    input_file:str = typer.Argument('input.csv', help='Path to the csv/txt file containing the targets (format: "target,ra,dec"), where ra, dec are the ICRS coordinates of target in degrees in J2000 equinox'),
     output_dir:str = typer.Argument('output', help='Folder to write outputs to'),
     site:str = typer.Argument('cfht', help='Observatory. Refer to list_obs for a complete list'),
-    year:int = typer.Argument(2021, help='Year')
+    year:int = typer.Argument(2021, help='Year (format: yyyy)')
   ):
 
   '''
@@ -750,14 +733,15 @@ def vis_year(
 
 @app.command()
 def vis_day(
-    input_file:str = typer.Argument('input.csv', help='csv/txt file containing names and coordinates of targets (in degrees)'),
+    input_file:str = typer.Argument('input.csv', help='Path to the csv/txt file containing the targets (format: "target,ra,dec"), where ra, dec are the ICRS coordinates of target in degrees in J2000 equinox'),
     output_dir:str = typer.Argument('output', help='Folder to write outputs to'),
     site:str = typer.Argument('cfht', help='Observatory'),
-    date:str = typer.Argument(None, help='Date in format yyyy-mm-dd')
+    date:str = typer.Argument(None, help='Date (format: yyyy-mm-dd)')
   ):
 
   '''
-  Plots visibility plots for each target in the input file at the given site during the given year. Ensure input file is in the format 'name,ra,dec'
+  Plots visibility plots for each target in the input file at the given site during the given day. 
+
   '''
 
   # convert the date parameter into Python datetime format
@@ -794,4 +778,10 @@ def vis_day(
       plt.close(fig)
 
 if __name__ == '__main__':
-    app()
+  '''
+  This module contains a wrapper on top of visibility.py (https://ia-observationtools.readthedocs.io/en/latest/visibility.html | https://github.com/iastro-pt/ObservationTools) to allow users to 
+  obtain visibility plots for large numbers of objects on separate plots without having to write any code themselves. Whereas the original plots the visibilities for all targets
+  on the same plot, this version plots them separately. The original also uses object names to get the coordinates, but this version directly uses the 
+  ICRS J2000 coordinates  of the targets to reduce the chances of objects being confused with other objects.
+  '''
+  app()

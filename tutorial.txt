@@ -1,0 +1,50 @@
+This tutorial will guide you through using the makeTable.py CLI to create an HTML table containing information on a group of galaxies with Spitzer IRS observations.
+
+To do this, we will be using targets and coordinates from the file 'input.csv' and the Spitzer spectra for each target will be located in the 
+directory 'spectra'. Everything else will be downloaded/created as part of this tutorial.
+
+Ensure you are in the root directory. Now open your preferred terminal (some terminals may not support Typer's styles but this is optional). 
+Run the command "python ./src/makeTable.py'
+
+    - You will be asked for the path to the input file. In our case this is 'input.csv'.
+    - Now enter the name for the output table. We will use 'index' since this is what most web servers expect
+    - You will be asked if you want to add spectra plots. Type 'y' and return
+    - Type y again since we will generate the plots ourselves
+
+    - Keep responding with 'y' until you are asked if you want any other images/plots. Respond with 'n' since we have none, and do the same for links to toher files
+    - After this, want all the extra information, so keep responding with 'y' until you are asked to provide information to plot the Spitzer spectra.
+
+    SPITZER SPECTRA PLOTS
+        - The name of the directory will be 'spectra'
+        - We will save the output in 'spectra-plots'
+        - Respond with 'y' for all the emission you want to plot. Choose at least one for this demonstration.
+        - We also want to see the bit-flags, so respond with 'y' once more
+        - We will scale the spectra using the edge ratios so reply with 'y'
+    
+    Now you will be asked to provide information to perform PAHFit fits and plots the resulting spectra
+
+    PAHFit
+        - The directory will be spectra once more
+        - Output to 'pahfits'
+        - It is recommended to choose a high number of iterations ( > 200) when using PAHFit but we will use 20 for now to speed things up. The resulting fit will be poor as expected.
+        - the packfile is located at './data/packfile.ipac'
+        - The relative error must be below 1. Since the default is 1e-10 we will use that here.
+
+    You will then be asked to provide information to generate RGB images for the provided targets.
+
+    RGB
+        - Let's save the images in the directory 'rgb'
+        - Choose any 3 filters you wish. 'i,g,u' should be a good combo
+        - Choose your favourite image format
+        - You will be asked if you want to change the pmin and pmax values. If you do, supply your values, ensuring pmin < pmax for any given band.
+        
+    And finally you will be asked for information to generate visibility plots for the targets
+
+    VISIBILITY 
+        - Let's save the outputs to 'visibility'
+        - Go through the list of observatories and choose a code, e.g. 'cfht'
+        - Choose either 'year' or 'day' and provide the date in the requested format
+
+    And that's all! The program will now build the rows and output the table to 'index.html' and 'index.csv'. Open the HTML file in your browser to check out the result for yourself.
+
+You can also run each individual tool (pahfitHelper, plotSpectra, sdss and visibility) from the command line. Use the --help option to learn more about how each one works.

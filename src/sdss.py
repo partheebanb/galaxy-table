@@ -30,8 +30,8 @@ def cleanup():
     os.remove('image_2d.fits')
 
 @app.command()
-def inputHandler(input_file: str = typer.Argument('input.csv', help='csv/txt file containing names and coordinates of targets (in degrees)'),
-        output_dir:str = typer.Argument('output', help='Folder to write outputs to'),
+def inputHandler(input_file: str = typer.Argument('input.csv', help='Path to the csv file containing the targets (format "target,ra,dec"), where ra, dec are the ICRS coordinates of target in degrees in J2000 equinox'),
+        output_dir:str = typer.Argument('output', help='Directory to write outputs to'),
         filters:str = typer.Argument('i,g,u', help='Choose three filters from z,i,r,g,u in the format "1,2,3". The order of the inputs decides the RGB bands of the output. Example: "i,g,u", where i is the r band, g is the g band, and u is the b band.'),
         output_format:str = typer.Argument('png', help='Choose your output format from any format supported by PIL'),
         pmin_r:float = typer.Option(0.5, help='pmin for r band'),
@@ -57,8 +57,7 @@ def inputHandler(input_file: str = typer.Argument('input.csv', help='csv/txt fil
 
             Infrared (z):        9134
 
-        You can choose any output format supported by PIL and set pmin and pmax for each band anywhere between 0 and 100. You can also save the FITS files for each image.
-
+        You can choose any output format supported by PIL and set pmin and pmax for each band anywhere between 0 and 100. 
     """
     sdss(input_file, output_dir, filters, output_format, pmin_r,pmax_r, pmin_g, pmax_g, pmin_b, pmax_b)
 
@@ -73,14 +72,10 @@ def sdss(input_file,
         pmin_b,
         pmax_b):
     """
-    Generates RGB images using SDSS data and APLPY. Information for parameters can be found in inputHandler()
+    Generates RGB images using SDSS data and APLPY. Information for parameters can be found in inputHandler(). I separated them up to allow easier access from makeTable.py
     """
     
-    # typer.secho(f'{exclude_bf}', fg=typer.colors.MAGENTA)
-
     warnings.filterwarnings("ignore")
-
-    save_fits = False
 
     # get parameters and inputs into a suitable format
     df = pd.read_csv(input_file, header=None)
@@ -123,16 +118,12 @@ def sdss(input_file,
             # Obtain the PrimaryHDU from the HDUList for each band
             r, g, b = im[0][0], im[1][0], im[2][0]
 
-
             # save the fits files so they can be combined into a single rgb cube
-            if not save_fits:
-                r.writeto('r.fits', overwrite=True)
-                g.writeto('g.fits', overwrite=True)
-                b.writeto('b.fits', overwrite=True)
-                aplpy.make_rgb_cube(['r.fits', 'g.fits', 'b.fits'], f'image.fits', north=True)
-            else:
-                pass
-            
+            r.writeto('r.fits', overwrite=True)
+            g.writeto('g.fits', overwrite=True)
+            b.writeto('b.fits', overwrite=True)
+            aplpy.make_rgb_cube(['r.fits', 'g.fits', 'b.fits'], f'image.fits', north=True)
+
             aplpy.make_rgb_image(f'image.fits', fr'{output_dir}/{name}.{output_format}',  pmin_r=pmin_r, pmax_r=pmax_r, pmin_g=pmin_g, pmax_g=pmax_g, pmin_b=pmin_b, pmax_b=pmax_b)
             image = aplpy.FITSFigure(fr'{output_dir}/{name}.{output_format}')
             image.show_rgb()
@@ -168,8 +159,11 @@ def sdss(input_file,
 
             kpcArcmin = cosmo.kpc_proper_per_arcmin(float(redshift)).value
             length = round(kpcArcmin*2,1)  
-            image.add_scalebar(0.03, label=f'120" | {length}kpc | r = {redshift}', color='red')
 
+            # add scalebar
+            image.add_scalebar(1/30, label=f'120" | {length}kpc | r = {redshift}', color='red')
+
+            # save to output dir in the appropriate format
             image.save(fr'{output_dir}/{name}.{output_format}')
             
             typer.echo('Finished plotting: ' + styled_name)
